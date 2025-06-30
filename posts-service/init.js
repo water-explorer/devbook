@@ -1,0 +1,1 @@
+<posts-service init.js>
