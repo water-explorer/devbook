@@ -45,11 +45,15 @@ services:
     build: ./notifications-service
     networks:
       - backend-net
+    ports:
+      - "6000:6000"
 
   frontend:
     build: ./frontend
     networks:
       - frontend-net
+    ports:
+      - "3000:3000"
 
   nginx-gateway:
     build: ./nginx-gateway
