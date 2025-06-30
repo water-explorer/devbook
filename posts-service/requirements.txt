@@ -1,1 +1,2 @@
-<posts-service requirements.txt>
+flask
+pymongo

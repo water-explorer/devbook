@@ -1,1 +1,74 @@
-<docker-compose.yml content>
+
+
+version: '3.8'
+services:
+  db-users:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - backend-net
+
+  db-posts:
+    image: mongo
+    volumes:
+      - mongodbdata:/data/db
+    networks:
+      - backend-net
+
+  redis-cache:
+    image: redis
+    networks:
+      - backend-net
+
+  users-service:
+    build: ./users-service
+    environment:
+      - PGHOST=db-users
+      - PGUSER=postgres
+      - PGPASSWORD=secret
+      - PGDATABASE=usersdb
+    depends_on:
+      - db-users
+    networks:
+      - backend-net
+
+  posts-service:
+    build: ./posts-service
+    depends_on:
+      - db-posts
+    networks:
+      - backend-net
+
+  notifications-service:
+    build: ./notifications-service
+    networks:
+      - backend-net
+
+  frontend:
+    build: ./frontend
+    networks:
+      - frontend-net
+
+  nginx-gateway:
+    build: ./nginx-gateway
+    ports:
+      - "80:80"
+    depends_on:
+      - users-service
+      - posts-service
+      - notifications-service
+      - frontend
+    networks:
+      - backend-net
+      - frontend-net
+
+volumes:
+  pgdata:
+  mongodbdata:
+
+networks:
+  backend-net:
+  frontend-net:
