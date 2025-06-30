@@ -1,5 +1,3 @@
-
-
 version: '3.8'
 services:
   db-users:
@@ -24,7 +22,8 @@ services:
       - backend-net
 
   users-service:
-    build: ./users-service
+    build:
+      context: ./users-service
     environment:
       - PGHOST=db-users
       - PGUSER=postgres
